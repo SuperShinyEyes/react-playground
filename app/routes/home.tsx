@@ -29,7 +29,6 @@ function FilterableProductTable({ products }) {
 
 function ProductTable({ products }) {
   const categories = [...new Set(products.map((x) => x.category))];
-  // console.log(categories);
   const rows = [];
 
   categories.forEach((c) => {
@@ -37,7 +36,6 @@ function ProductTable({ products }) {
     products
       .filter((p) => p.category === c)
       .forEach((p) => {
-        console.log(`${c}: ${p.name}`);
         rows.push(<ProductRow product={p} key={p.name} />);
       });
   });
@@ -56,7 +54,14 @@ function ProductTable({ products }) {
 }
 
 function SearchBar() {
-  return <input type="text" placeholder="Search..." />;
+  return (
+    <form>
+      <input type="text" placeholder="Search..." />
+      <label>
+        <input type="checkbox" /> Only show products in stock
+      </label>
+    </form>
+  );
 }
 
 function ProductCategoryRow({ category }) {
@@ -68,9 +73,15 @@ function ProductCategoryRow({ category }) {
 }
 
 function ProductRow({ product }) {
+  const name = product.stocked ? (
+    product.name
+  ) : (
+    <span style={{ color: 'red' }}>{product.name}</span>
+  );
+  console.log(name);
   return (
     <tr>
-      <td>{product.name}</td>
+      <td>{name}</td>
       <td>{product.price}</td>
     </tr>
   );
