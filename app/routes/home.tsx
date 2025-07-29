@@ -9,7 +9,7 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-const data = [
+const PRODUCTS = [
   { category: 'Fruits', price: '$1', stocked: true, name: 'Apple' },
   { category: 'Fruits', price: '$1', stocked: true, name: 'Dragonfruit' },
   { category: 'Fruits', price: '$2', stocked: false, name: 'Passionfruit' },
@@ -18,32 +18,27 @@ const data = [
   { category: 'Vegetables', price: '$1', stocked: true, name: 'Peas' },
 ];
 
-function FilterableProductTable() {
+function FilterableProductTable({ products }) {
   return (
     <div>
       <SearchBar />
-      <ProductTable />
+      <ProductTable products={products} />
     </div>
   );
 }
 
-function ProductTable() {
-  const categories = [...new Set(data.map((x) => x.category))];
+function ProductTable({ products }) {
+  const categories = [...new Set(products.map((x) => x.category))];
   // console.log(categories);
-  const body = [];
+  const rows = [];
 
-  let keyIndex = 0;
   categories.forEach((c) => {
-    body.push(<ProductCategoryRow category={c} id={c} />);
-
-    data
-      .filter((e) => e.category === c)
-      .forEach((item) => {
-        console.log(`${c}: ${item.name}`);
-        body.push(
-          <ProductRow product={item.name} price={item.price} id={item.name} />
-        );
-        keyIndex++;
+    rows.push(<ProductCategoryRow category={c} key={c} />);
+    products
+      .filter((p) => p.category === c)
+      .forEach((p) => {
+        console.log(`${c}: ${p.name}`);
+        rows.push(<ProductRow product={p} key={p.name} />);
       });
   });
 
@@ -55,28 +50,28 @@ function ProductTable() {
           <th>Price</th>
         </tr>
       </thead>
-      <tbody>{body}</tbody>
+      <tbody>{rows}</tbody>
     </table>
   );
 }
 
 function SearchBar() {
-  return <input type="text" />;
+  return <input type="text" placeholder="Search..." />;
 }
 
-function ProductCategoryRow({ category, id }) {
+function ProductCategoryRow({ category }) {
   return (
-    <tr key={id}>
-      <td>{category}</td>
+    <tr>
+      <th colSpan="2">{category}</th>
     </tr>
   );
 }
 
-function ProductRow({ product, price, id }) {
+function ProductRow({ product }) {
   return (
-    <tr key={id}>
-      <td>{product}</td>
-      <td>{price}</td>
+    <tr>
+      <td>{product.name}</td>
+      <td>{product.price}</td>
     </tr>
   );
 }
@@ -89,7 +84,7 @@ export default function Home() {
       <h2>Hello, world!</h2>
       <h3>Hello, world!</h3>
       <p>Hi</p>
-      <FilterableProductTable />
+      <FilterableProductTable products={PRODUCTS} />
     </>
   );
 }
